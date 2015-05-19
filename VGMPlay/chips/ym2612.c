@@ -25,7 +25,7 @@
 #include <stdio.h>
 #include <math.h>
 #include <string.h> // for memset()
-#include "mamedef.h"	// for correct INLINE macro
+#include "mamedef.h"// for correct INLINE macro
 #include "ym2612.h"
 
 
@@ -97,7 +97,7 @@
 #define AR_RATE        399128
 #define DR_RATE        5514396
 
-//#define AR_RATE        426136			// good rate ?
+//#define AR_RATE        426136// good rate ?
 //#define DR_RATE        (AR_RATE * 12)
 
 #define LFO_FMS_LBITS  9  // FIXED (LFO_FMS_BASE gives somethink as 1)
@@ -276,8 +276,8 @@ INLINE void CALC_FINC_SL(slot_ *SL, int finc, int kc)
   fprintf(debug_file, "FINC = %d  SL->Finc = %d\n", finc, SL->Finc);
 #endif
 
-	if (SL->KSR != ksr)		// si le KSR a changé alors
-	{						// les différents taux pour l'enveloppe sont mis à jour
+  if (SL->KSR != ksr)// si le KSR a changé alors
+  {                  // les différents taux pour l'enveloppe sont mis à jour
     SL->KSR = ksr;
 
     SL->EincA = SL->AR[ksr];
@@ -333,8 +333,8 @@ INLINE void KEY_ON(channel_ *CH, int nsl)
     SL->Ecnt = (DECAY_TO_ATTACK[ENV_TAB[SL->Ecnt >> ENV_LBITS]] + ENV_ATTACK) & SL->ChgEnM;
     SL->ChgEnM = 0xFFFFFFFF;
 
-//    SL->Ecnt = DECAY_TO_ATTACK[ENV_TAB[SL->Ecnt >> ENV_LBITS]] + ENV_ATTACK;
-//    SL->Ecnt = 0;
+    //SL->Ecnt = DECAY_TO_ATTACK[ENV_TAB[SL->Ecnt >> ENV_LBITS]] + ENV_ATTACK;
+    //SL->Ecnt = 0;
 
     SL->Einc = SL->EincA;
     SL->Ecmp = ENV_DECAY;
@@ -612,8 +612,8 @@ int CHANNEL_SET(ym2612_ *YM2612, int Adr, unsigned char data)
 
       CH->FB = 9 - ((data >> 3) & 7);                // Real thing ?
 
-//      if(CH->FB = ((data >> 3) & 7)) CH->FB = 9 - CH->FB;    // Thunder force 4 (music stage 8), Gynoug, Aladdin bug sound...
-//      else CH->FB = 31;
+      //if(CH->FB = ((data >> 3) & 7)) CH->FB = 9 - CH->FB;    // Thunder force 4 (music stage 8), Gynoug, Aladdin bug sound...
+      //else CH->FB = 31;
 
 #if YM_DEBUG_LEVEL > 1
       fprintf(debug_file, "CHANNEL[%d] ALGO = %d  FB = %d\n", num, CH->ALGO, CH->FB);
@@ -743,10 +743,10 @@ int YM_SET(ym2612_ *YM2612, int Adr, unsigned char data)
         YM2612->CHANNEL[2].SLOT[0].Finc = -1;    // recalculate phase step
       }
 
-//      if((data & 2) && (YM2612->Status & 2)) YM2612->TimerBcnt = YM2612->TimerBL;
-//      if((data & 1) && (YM2612->Status & 1)) YM2612->TimerAcnt = YM2612->TimerAL;
+      //if((data & 2) && (YM2612->Status & 2)) YM2612->TimerBcnt = YM2612->TimerBL;
+      //if((data & 1) && (YM2612->Status & 1)) YM2612->TimerAcnt = YM2612->TimerAL;
 
-//      YM2612->Status &= (~data >> 4);          // Reset du Status au cas ou c'est demand?
+      //YM2612->Status &= (~data >> 4);          // Reset du Status au cas ou c'est demand?
       YM2612->Status &= (~data >> 4) & (data >> 2);  // Reset Status
 
       YM2612->Mode = data;
@@ -937,7 +937,6 @@ else YM2612->en3 = ENV_TAB[(CH->SLOT[S3].Ecnt >> ENV_LBITS)] + CH->SLOT[S3].TLL;
 
 #define GET_CURRENT_ENV_LFO                                          \
 env_LFO = YM2612->LFO_ENV_UP[i];                                          \
-                                                      \
 if(CH->SLOT[S0].SEG & 4)                                          \
 {                                                      \
   if((YM2612->en0 = ENV_TAB[(CH->SLOT[S0].Ecnt >> ENV_LBITS)] + CH->SLOT[S0].TLL) > ENV_MASK) YM2612->en0 = 0;      \
@@ -1857,13 +1856,13 @@ void Update_Chan_Algo7_LFO_Int(ym2612_ *YM2612, channel_ *CH, int **buf, int len
 // Initialisation de l'émulateur YM2612
 ym2612_ *YM2612_Init(int Clock, int Rate, int Interpolation)
 {
-	ym2612_ *YM2612;
+  ym2612_ *YM2612;
   int i, j;
   double x;
 
   if((Rate == 0) || (Clock == 0)) return NULL;
 
-	YM2612 = (ym2612_ *)malloc(sizeof(ym2612_));
+  YM2612 = (ym2612_ *)malloc(sizeof(ym2612_));
   memset(YM2612, 0, sizeof(ym2612_));
 
 #if YM_DEBUG_LEVEL > 0
@@ -2117,7 +2116,7 @@ ym2612_ *YM2612_Init(int Clock, int Rate, int Interpolation)
 
 int YM2612_End(ym2612_ *YM2612)
 {
-	free(YM2612);
+  free(YM2612);
 
 #if YM_DEBUG_LEVEL > 0
   if(debug_file) fclose(debug_file);
@@ -2145,7 +2144,7 @@ int YM2612_Reset(ym2612_ *YM2612)
   YM2612->TimerBcnt = 0;
   YM2612->DAC = 0;
   YM2612->DACdata = 0;
-	YM2612->dac_highpass = 0;
+  YM2612->dac_highpass = 0;
 
   YM2612->Status = 0;
 
@@ -2216,16 +2215,16 @@ int YM2612_Reset(ym2612_ *YM2612)
 
 
 int YM2612_Read(ym2612_ *YM2612)
-{
-/*  static int cnt = 0;
+{/*
+  static int cnt = 0;
 
   if(cnt++ == 50)
   {
     cnt = 0;
     return YM2612->Status;
   }
-  else return YM2612->Status | 0x80;
-*/
+  else return YM2612->Status | 0x80;*/
+
   return YM2612->Status;
 }
 
@@ -2258,7 +2257,7 @@ int YM2612_Write(ym2612_ *YM2612, unsigned char adr, unsigned char data)
         if(YM2612->REG[0][YM2612->OPNAadr] == data) return 2;
         YM2612->REG[0][YM2612->OPNAadr] = data;
 
-//				if (GYM_Dumping) Update_GYM_Dump(1, YM2612->OPNAadr, data);
+        //if (GYM_Dumping) Update_GYM_Dump(1, YM2612->OPNAadr, data);
 
         if(d < 0xA0)    // SLOT
         {
@@ -2273,7 +2272,7 @@ int YM2612_Write(ym2612_ *YM2612, unsigned char adr, unsigned char data)
       {
         YM2612->REG[0][YM2612->OPNAadr] = data;
 
-//				if ((GYM_Dumping) && ((YM2612->OPNAadr == 0x22) || (YM2612->OPNAadr == 0x27) || (YM2612->OPNAadr == 0x28))) Update_GYM_Dump(1, YM2612->OPNAadr, data);
+        //if ((GYM_Dumping) && ((YM2612->OPNAadr == 0x22) || (YM2612->OPNAadr == 0x27) || (YM2612->OPNAadr == 0x28))) Update_GYM_Dump(1, YM2612->OPNAadr, data);
 
         YM_SET(YM2612, YM2612->OPNAadr, data);
       }
@@ -2291,7 +2290,7 @@ int YM2612_Write(ym2612_ *YM2612, unsigned char adr, unsigned char data)
         if(YM2612->REG[1][YM2612->OPNBadr] == data) return 2;
         YM2612->REG[1][YM2612->OPNBadr] = data;
 
-//				if (GYM_Dumping) Update_GYM_Dump(2, YM2612->OPNBadr, data);
+        //if (GYM_Dumping) Update_GYM_Dump(2, YM2612->OPNBadr, data);
 
         if(d < 0xA0)    // SLOT
         {
@@ -2317,7 +2316,7 @@ int YM2612_GetMute(ym2612_ *YM2612)
     result |= YM2612->CHANNEL[i].Mute << i;
   }
   result |= YM2612->DAC_Mute << 6;
-	//result &= !(YM2612_Enable_SSGEG);
+  //result &= !(YM2612_Enable_SSGEG);
   return result;  
 }
 
@@ -2329,30 +2328,30 @@ void YM2612_SetMute(ym2612_ *YM2612, int val)
     YM2612->CHANNEL[i].Mute = (val >> i) & 1;
   }
   YM2612->DAC_Mute = (val >> 6) & 1;
-	//YM2612_Enable_SSGEG = !(val & 1);
+  //YM2612_Enable_SSGEG = !(val & 1);
 }
 
 void YM2612_SetOptions(int Flags)
 {
-	DAC_Highpass_Enable = (Flags >> 0) & 0x01;
-	YM2612_Enable_SSGEG = (Flags >> 1) & 0x01;
+  DAC_Highpass_Enable = (Flags >> 0) & 0x01;
+  YM2612_Enable_SSGEG = (Flags >> 1) & 0x01;
 }
 
 void YM2612_ClearBuffer(int **buffer, int length)
 {
-	// the MAME core does this before updating,
-	// but the Gens core does this before mixing
-	int *bufL, *bufR;
-	int i;
-	
-	bufL = buffer[0];
-	bufR = buffer[1];
-	
-	for(i = 0; i < length; i++)
-	{
-		bufL[i] = 0x0000;
-		bufR[i] = 0x0000;
-	}
+  // the MAME core does this before updating,
+  // but the Gens core does this before mixing
+  int *bufL, *bufR;
+  int i;
+  
+  bufL = buffer[0];
+  bufR = buffer[1];
+  
+  for(i = 0; i < length; i++)
+  {
+    bufL[i] = 0x0000;
+    bufR[i] = 0x0000;
+  }
 }
 
 void YM2612_Update(ym2612_ *YM2612, int **buf, int length)
@@ -2385,7 +2384,7 @@ void YM2612_Update(ym2612_ *YM2612, int **buf, int length)
   if(YM2612->CHANNEL[4].SLOT[0].Finc == -1) CALC_FINC_CH(&YM2612->CHANNEL[4]);
   if(YM2612->CHANNEL[5].SLOT[0].Finc == -1) CALC_FINC_CH(&YM2612->CHANNEL[5]);
 
-/*
+  /*
   CALC_FINC_CH(&YM2612->CHANNEL[0]);
   CALC_FINC_CH(&YM2612->CHANNEL[1]);
   if(YM2612->Mode & 0x40)
@@ -2402,7 +2401,7 @@ void YM2612_Update(ym2612_ *YM2612, int **buf, int length)
   CALC_FINC_CH(&YM2612->CHANNEL[3]);
   CALC_FINC_CH(&YM2612->CHANNEL[4]);
   CALC_FINC_CH(&YM2612->CHANNEL[5]);
-*/
+  */
 
   if(YM2612->Inter_Step & 0x04000) algo_type = 0;
   else algo_type = 16;
@@ -2428,12 +2427,12 @@ void YM2612_Update(ym2612_ *YM2612, int **buf, int length)
 
 
   if (!YM2612->CHANNEL[0].Mute) UPDATE_CHAN[YM2612->CHANNEL[0].ALGO + algo_type](YM2612, &(YM2612->CHANNEL[0]), buf, length);
-	if (!YM2612->CHANNEL[1].Mute) UPDATE_CHAN[YM2612->CHANNEL[1].ALGO + algo_type](YM2612, &(YM2612->CHANNEL[1]), buf, length);
-	if (!YM2612->CHANNEL[2].Mute) UPDATE_CHAN[YM2612->CHANNEL[2].ALGO + algo_type](YM2612, &(YM2612->CHANNEL[2]), buf, length);
-	if (!YM2612->CHANNEL[3].Mute) UPDATE_CHAN[YM2612->CHANNEL[3].ALGO + algo_type](YM2612, &(YM2612->CHANNEL[3]), buf, length);
-	if (!YM2612->CHANNEL[4].Mute) UPDATE_CHAN[YM2612->CHANNEL[4].ALGO + algo_type](YM2612, &(YM2612->CHANNEL[4]), buf, length);
-	if (!YM2612->CHANNEL[5].Mute 
-		&& !(YM2612->DAC))          UPDATE_CHAN[YM2612->CHANNEL[5].ALGO + algo_type](YM2612, &(YM2612->CHANNEL[5]), buf, length);
+  if (!YM2612->CHANNEL[1].Mute) UPDATE_CHAN[YM2612->CHANNEL[1].ALGO + algo_type](YM2612, &(YM2612->CHANNEL[1]), buf, length);
+  if (!YM2612->CHANNEL[2].Mute) UPDATE_CHAN[YM2612->CHANNEL[2].ALGO + algo_type](YM2612, &(YM2612->CHANNEL[2]), buf, length);
+  if (!YM2612->CHANNEL[3].Mute) UPDATE_CHAN[YM2612->CHANNEL[3].ALGO + algo_type](YM2612, &(YM2612->CHANNEL[3]), buf, length);
+  if (!YM2612->CHANNEL[4].Mute) UPDATE_CHAN[YM2612->CHANNEL[4].ALGO + algo_type](YM2612, &(YM2612->CHANNEL[4]), buf, length);
+  if (!YM2612->CHANNEL[5].Mute 
+    && !(YM2612->DAC))          UPDATE_CHAN[YM2612->CHANNEL[5].ALGO + algo_type](YM2612, &(YM2612->CHANNEL[5]), buf, length);
 
   YM2612->Inter_Cnt = int_cnt;
 
@@ -2492,12 +2491,12 @@ void YM2612_DacAndTimers_Update(ym2612_ *YM2612, int **buffer, int length)
 
     for(i = 0; i < length; i++)
     {
-			long dac = (YM2612->DACdata << highpass_fract) - YM2612->dac_highpass;
-			if (DAC_Highpass_Enable)	// else it's left at 0 and doesn't affect the sound
-				YM2612->dac_highpass += dac >> highpass_shift;
-			dac >>= highpass_fract;
-			bufL[i] += dac & YM2612->CHANNEL[5].LEFT;
-			bufR[i] += dac & YM2612->CHANNEL[5].RIGHT;
+      long dac = (YM2612->DACdata << highpass_fract) - YM2612->dac_highpass;
+      if (DAC_Highpass_Enable)// else it's left at 0 and doesn't affect the sound
+        YM2612->dac_highpass += dac >> highpass_shift;
+      dac >>= highpass_fract;
+      bufL[i] += dac & YM2612->CHANNEL[5].LEFT;
+      bufR[i] += dac & YM2612->CHANNEL[5].RIGHT;
     }
   }
 
@@ -2505,7 +2504,7 @@ void YM2612_DacAndTimers_Update(ym2612_ *YM2612, int **buffer, int length)
 
   if(YM2612->Mode & 1)              // Timer A ON ?
   {
-//    if((YM2612->TimerAcnt -= 14073) <= 0)    // 13879=NTSC (old: 14475=NTSC  14586=PAL)
+    //if((YM2612->TimerAcnt -= 14073) <= 0)    // 13879=NTSC (old: 14475=NTSC  14586=PAL)
     if((YM2612->TimerAcnt -= i) <= 0)
     {
       YM2612->Status |= (YM2612->Mode & 0x04) >> 2;
@@ -2521,7 +2520,7 @@ void YM2612_DacAndTimers_Update(ym2612_ *YM2612, int **buffer, int length)
 
   if(YM2612->Mode & 2)              // Timer B ON ?
   {
-//    if((YM2612->TimerBcnt -= 14073) <= 0)    // 13879=NTSC (old: 14475=NTSC  14586=PAL)
+    //if((YM2612->TimerBcnt -= 14073) <= 0)    // 13879=NTSC (old: 14475=NTSC  14586=PAL)
     if((YM2612->TimerBcnt -= i) <= 0)
     {
       YM2612->Status |= (YM2612->Mode & 0x08) >> 2;
@@ -2537,15 +2536,15 @@ void YM2612_DacAndTimers_Update(ym2612_ *YM2612, int **buffer, int length)
 /* Gens */
 
 void YM2612_Special_Update(ym2612_ *YM2612)
-{
-/*	if (YM_Len && YM2612_Enable)
+{/*
+  if (YM_Len && YM2612_Enable)
   {
     YM2612_Update(YM_Buf, YM_Len);
 
-		YM_Buf[0] = Seg_L + Sound_Extrapol[VDP_Current_Line + 1][0];
-		YM_Buf[1] = Seg_R + Sound_Extrapol[VDP_Current_Line + 1][0];
+    YM_Buf[0] = Seg_L + Sound_Extrapol[VDP_Current_Line + 1][0];
+    YM_Buf[1] = Seg_R + Sound_Extrapol[VDP_Current_Line + 1][0];
     YM_Len = 0;
-	}*/
+  }*/
 }
 
 /* end */
