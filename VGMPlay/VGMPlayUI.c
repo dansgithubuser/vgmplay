@@ -59,6 +59,10 @@
 #include "VGMPlay_Intf.h"
 #include "VGMPlayUI.h"
 
+#if _MSC_VER==1800//Visual Studio 2013
+	#define PATH_MAX MAX_PATH
+#endif
+
 // Options Variables
 extern UINT32 SampleRate;	// Note: also used by some sound cores to
 							//       determinate the chip sample rate

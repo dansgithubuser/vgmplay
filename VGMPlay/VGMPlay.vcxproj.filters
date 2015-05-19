@@ -254,6 +254,9 @@
     <ClCompile Include="chips\panning.c">
       <Filter>SoundCore</Filter>
     </ClCompile>
+    <ClCompile Include="utils.c">
+      <Filter>Quellcodedateien</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="PortTalk_IOCTL.h">

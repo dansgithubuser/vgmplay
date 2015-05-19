@@ -1,6 +1,7 @@
 // Header File for structures and constants used within VGMPlay.c
 
 #include "VGMFile.h"
+#include <windows.h>
 #include <zlib.h>
 
 #define VGMPLAY_VER_STR	"0.40.5"

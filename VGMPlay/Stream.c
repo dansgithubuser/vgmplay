@@ -55,6 +55,10 @@
 #include "VGMPlay_Intf.h"
 #include "Stream.h"
 
+#if _MSC_VER==1800//Visual Studio 2013
+	#define PATH_MAX MAX_PATH
+#endif
+
 #ifndef WIN32
 typedef struct
 {

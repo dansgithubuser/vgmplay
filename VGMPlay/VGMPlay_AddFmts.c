@@ -30,8 +30,7 @@
 #include <math.h>
 
 #ifdef WIN32
-//#include <windows.h>
-void __stdcall Sleep(unsigned int dwMilliseconds);
+#include <windows.h>
 #else
 #define	Sleep(msec)		usleep(msec * 1000)
 #endif
