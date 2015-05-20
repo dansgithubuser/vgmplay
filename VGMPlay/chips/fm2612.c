@@ -133,6 +133,7 @@
 #include <memory.h>
 #include <math.h>
 #include "mamedef.h"
+#include "../controls.h"
 #include "fm.h"
 
 #define NULL	((void *)0)
@@ -1263,7 +1264,7 @@ INLINE void advance_eg_channel(FM_OPN *OPN, FM_SLOT *SLOT)
 			        }
 
 			        /* recalculate EG output */
-			        if ((SLOT->ssg&0x08) && (SLOT->ssgn ^ (SLOT->ssg&0x04)))  /* SSG-EG Output Inversion */
+			        if ((SLOT->ssg&0x08) && (SLOT->ssgn ^ (SLOT->ssg&0x04)) && !controls[CONTROL_DISABLE_SSG])  /* SSG-EG Output Inversion */
 					SLOT->vol_out = ((UINT32)(0x200 - SLOT->volume) & MAX_ATT_INDEX) + SLOT->tl;
 			        else
 				        SLOT->vol_out = (UINT32)SLOT->volume + SLOT->tl;
@@ -1274,7 +1275,7 @@ INLINE void advance_eg_channel(FM_OPN *OPN, FM_SLOT *SLOT)
 			if (!(OPN->eg_cnt & ((1<<SLOT->eg_sh_d1r)-1)))
 			{
 			        /* SSG EG type */
-			        if (SLOT->ssg&0x08)
+			        if (SLOT->ssg&0x08 && !controls[CONTROL_DISABLE_SSG])
 			        {
 				        /* update attenuation level */
 				        if (SLOT->volume < 0x200)
@@ -1308,7 +1309,7 @@ INLINE void advance_eg_channel(FM_OPN *OPN, FM_SLOT *SLOT)
 			if (!(OPN->eg_cnt & ((1<<SLOT->eg_sh_d2r)-1)))
 			{
 			        /* SSG EG type */
-			        if (SLOT->ssg&0x08)
+			        if (SLOT->ssg&0x08 && !controls[CONTROL_DISABLE_SSG])
 			        {
 					/* update attenuation level */
 					if (SLOT->volume < 0x200)
@@ -1342,7 +1343,7 @@ INLINE void advance_eg_channel(FM_OPN *OPN, FM_SLOT *SLOT)
 			if (!(OPN->eg_cnt & ((1<<SLOT->eg_sh_rr)-1)))
 			{
 			        /* SSG EG type */
-			        if (SLOT->ssg&0x08)
+			        if (SLOT->ssg&0x08 && !controls[CONTROL_DISABLE_SSG])
 			        {
 				        /* update attenuation level */
 				        if (SLOT->volume < 0x200)
@@ -1547,7 +1548,7 @@ INLINE void refresh_fc_eg_slot(FM_OPN *OPN, FM_SLOT *SLOT , int fc , int kc )
 {
 	int ksr = kc >> SLOT->KSR;
 
-	fc += SLOT->DT[kc];
+	if(!controls[CONTROL_DISABLE_DETUNE]) fc += SLOT->DT[kc];
 
 	/* detects frequency overflow (credits to Nemesis) */
 	if (fc < 0) fc += OPN->fn_max;
@@ -1622,6 +1623,7 @@ INLINE signed int op_calc1(UINT32 phase, unsigned int env, signed int pm)
 INLINE void chan_calc(YM2612 *F2612, FM_OPN *OPN, FM_CH *CH)
 {
   UINT32 AM = OPN->LFO_AM >> CH->ams;
+  if(controls[CONTROL_DISABLE_LFO_AM]) AM = 0;
   unsigned int eg_out;
 
   if (CH->Muted)
@@ -1651,7 +1653,7 @@ INLINE void chan_calc(YM2612 *F2612, FM_OPN *OPN, FM_CH *CH)
     CH->op1_out[1] = 0;
     if( eg_out < ENV_QUIET )  /* SLOT 1 */
     {
-      if (!CH->FB)
+      if (!CH->FB||controls[CONTROL_DISABLE_FEEDBACK])
         out=0;
 
       CH->op1_out[1] = op_calc1(CH->SLOT[SLOT1].phase, eg_out, (out<<CH->FB) );
@@ -1675,7 +1677,7 @@ INLINE void chan_calc(YM2612 *F2612, FM_OPN *OPN, FM_CH *CH)
   CH->mem_value = OPN->mem;
 
   /* update phase counters AFTER output calculations */
-  if(CH->pms)
+  if(CH->pms&&!controls[CONTROL_DISABLE_LFO_FM])
   {
     /* add support for 3 slot mode */
     if ((OPN->ST.mode & 0xC0) && (CH == &F2612->CH[2]))
@@ -1846,15 +1848,15 @@ static void OPNWriteReg(FM_OPN *OPN, int r, int v)
 		break;
 
 	case 0x40:	/* TL */
-		set_tl(CH,SLOT,v);
+		if(!controls[CONTROL_DISABLE_LEVEL]) set_tl(CH,SLOT,v);
 		break;
 
 	case 0x50:	/* KS, AR */
-		set_ar_ksr(OPN->type,CH,SLOT,v);
+		if(!controls[CONTROL_DISABLE_RATE]) set_ar_ksr(OPN->type,CH,SLOT,v);
 		break;
 
 	case 0x60:	/* bit7 = AM ENABLE, DR */
-		set_dr(OPN->type, SLOT,v);
+		if(!controls[CONTROL_DISABLE_RATE]) set_dr(OPN->type, SLOT,v);
 
 		if(OPN->type & TYPE_LFOPAN) /* YM2608/2610/2610B/2612 */
 		{
@@ -1863,11 +1865,11 @@ static void OPNWriteReg(FM_OPN *OPN, int r, int v)
 		break;
 
 	case 0x70:	/*     SR */
-		set_sr(OPN->type,SLOT,v);
+		if(!controls[CONTROL_DISABLE_RATE]) set_sr(OPN->type,SLOT,v);
 		break;
 
 	case 0x80:	/* SL, RR */
-		set_sl_rr(OPN->type,SLOT,v);
+		if(!controls[CONTROL_DISABLE_RATE]) set_sl_rr(OPN->type,SLOT,v);
 		break;
 
 	case 0x90:	/* SSG-EG */
@@ -1960,6 +1962,7 @@ static void OPNWriteReg(FM_OPN *OPN, int r, int v)
 		break;
 
 	case 0xa0:
+		if(controls[CONTROL_DISABLE_FREQUENCY]) break;
 		switch( OPN_SLOT(r) )
 		{
 		case 0:		/* 0xa0-0xa2 : FNUM1 */
@@ -2257,7 +2260,7 @@ void ym2612_update_one(void *chip, FMSAMPLE **buffer, int length)
 	/* refresh PG and EG */
 	refresh_fc_eg_chan( OPN, cch[0] );
 	refresh_fc_eg_chan( OPN, cch[1] );
-	if( (OPN->ST.mode & 0xc0) )
+	if( (OPN->ST.mode & 0xc0) && !controls[CONTROL_DISABLE_SPECIAL])
 	{
 		/* 3SLOT MODE */
 		if( cch[2]->SLOT[SLOT1].Incr==-1)
@@ -2271,7 +2274,7 @@ void ym2612_update_one(void *chip, FMSAMPLE **buffer, int length)
 	refresh_fc_eg_chan( OPN, cch[3] );
 	refresh_fc_eg_chan( OPN, cch[4] );
 	refresh_fc_eg_chan( OPN, cch[5] );
-	if (! length)
+	if (! length && !controls[CONTROL_DISABLE_SSG])
 	{
 		update_ssg_eg_channel(&cch[0]->SLOT[SLOT1]);
 		update_ssg_eg_channel(&cch[1]->SLOT[SLOT1]);
@@ -2294,22 +2297,24 @@ void ym2612_update_one(void *chip, FMSAMPLE **buffer, int length)
 		out_fm[5] = 0;
 
 		/* update SSG-EG output */
-		update_ssg_eg_channel(&cch[0]->SLOT[SLOT1]);
-		update_ssg_eg_channel(&cch[1]->SLOT[SLOT1]);
-		update_ssg_eg_channel(&cch[2]->SLOT[SLOT1]);
-		update_ssg_eg_channel(&cch[3]->SLOT[SLOT1]);
-		update_ssg_eg_channel(&cch[4]->SLOT[SLOT1]);
-		update_ssg_eg_channel(&cch[5]->SLOT[SLOT1]);
+		if(!controls[CONTROL_DISABLE_SSG]){
+			update_ssg_eg_channel(&cch[0]->SLOT[SLOT1]);
+			update_ssg_eg_channel(&cch[1]->SLOT[SLOT1]);
+			update_ssg_eg_channel(&cch[2]->SLOT[SLOT1]);
+			update_ssg_eg_channel(&cch[3]->SLOT[SLOT1]);
+			update_ssg_eg_channel(&cch[4]->SLOT[SLOT1]);
+			update_ssg_eg_channel(&cch[5]->SLOT[SLOT1]);
+		}
 
 		/* calculate FM */
-		if (! F2612->dac_test)
+		if (! F2612->dac_test || controls[CONTROL_DISABLE_DAC])
 		{
 			chan_calc(F2612, OPN, cch[0]);
 			chan_calc(F2612, OPN, cch[1]);
 			chan_calc(F2612, OPN, cch[2]);
 			chan_calc(F2612, OPN, cch[3]);
 			chan_calc(F2612, OPN, cch[4]);
-			if( F2612->dacen )
+			if( F2612->dacen && !controls[CONTROL_DISABLE_DAC])
 				*cch[5]->connect4 += dacout;
 			else
 				chan_calc(F2612, OPN, cch[5]);
@@ -2367,7 +2372,7 @@ void ym2612_update_one(void *chip, FMSAMPLE **buffer, int length)
 		rt += ((out_fm[2]>>0) & OPN->pan[5]);
 		lt += ((out_fm[3]>>0) & OPN->pan[6]);
 		rt += ((out_fm[3]>>0) & OPN->pan[7]);
-		if (! F2612->dac_test)
+		if (! F2612->dac_test || controls[CONTROL_DISABLE_DAC])
 		{
 			lt += ((out_fm[4]>>0) & OPN->pan[8]);
 			rt += ((out_fm[4]>>0) & OPN->pan[9]);
@@ -2397,32 +2402,34 @@ void ym2612_update_one(void *chip, FMSAMPLE **buffer, int length)
 		bufL[i] = F2612->WaveL;
 		bufR[i] = F2612->WaveR;
 
-		/* CSM mode: if CSM Key ON has occured, CSM Key OFF need to be sent       */
-		/* only if Timer A does not overflow again (i.e CSM Key ON not set again) */
-		OPN->SL3.key_csm <<= 1;
+		if(!controls[CONTROL_DISABLE_CSM]){
+			/* CSM mode: if CSM Key ON has occured, CSM Key OFF need to be sent       */
+			/* only if Timer A does not overflow again (i.e CSM Key ON not set again) */
+			OPN->SL3.key_csm <<= 1;
 
-		/* timer A control */
-		//INTERNAL_TIMER_A( &OPN->ST , cch[2] )
-		{
-			if( OPN->ST.TAC &&  (OPN->ST.timer_handler==0) )
-				if( (OPN->ST.TAC -= (int)(OPN->ST.freqbase*4096)) <= 0 )
-				{
-					TimerAOver( &OPN->ST );
-					// CSM mode total level latch and auto key on
-					if( OPN->ST.mode & 0x80 )
-						CSMKeyControll( OPN, cch[2] );
-				}
-		}
+			/* timer A control */
+			//INTERNAL_TIMER_A( &OPN->ST , cch[2] )
+			{
+				if( OPN->ST.TAC &&  (OPN->ST.timer_handler==0) )
+					if( (OPN->ST.TAC -= (int)(OPN->ST.freqbase*4096)) <= 0 )
+					{
+						TimerAOver( &OPN->ST );
+						// CSM mode total level latch and auto key on
+						if( OPN->ST.mode & 0x80 )
+							CSMKeyControll( OPN, cch[2] );
+					}
+			}
 
-		/* CSM Mode Key ON still disabled */
-		if (OPN->SL3.key_csm & 2)
-		{
-			/* CSM Mode Key OFF (verified by Nemesis on real hardware) */
-			FM_KEYOFF_CSM(cch[2],SLOT1);
-			FM_KEYOFF_CSM(cch[2],SLOT2);
-			FM_KEYOFF_CSM(cch[2],SLOT3);
-			FM_KEYOFF_CSM(cch[2],SLOT4);
-			OPN->SL3.key_csm = 0;
+			/* CSM Mode Key ON still disabled */
+			if (OPN->SL3.key_csm & 2)
+			{
+				/* CSM Mode Key OFF (verified by Nemesis on real hardware) */
+				FM_KEYOFF_CSM(cch[2],SLOT1);
+				FM_KEYOFF_CSM(cch[2],SLOT2);
+				FM_KEYOFF_CSM(cch[2],SLOT3);
+				FM_KEYOFF_CSM(cch[2],SLOT4);
+				OPN->SL3.key_csm = 0;
+			}
 		}
 	}
 

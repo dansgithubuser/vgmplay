@@ -306,6 +306,7 @@
       <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Level1</WarningLevel>
       <Optimization Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Disabled</Optimization>
     </ClCompile>
+    <ClCompile Include="controls.c" />
     <ClCompile Include="pt_ioctl.c" />
     <ClCompile Include="Stream.c">
       <Optimization Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Disabled</Optimization>
@@ -387,6 +388,7 @@
     <ClInclude Include="chips\ymf271.h" />
     <ClInclude Include="chips\ymf278b.h" />
     <ClInclude Include="chips\ymz280b.h" />
+    <ClInclude Include="controls.h" />
     <ClInclude Include="PortTalk_IOCTL.h" />
     <ClInclude Include="Stream.h" />
     <ClInclude Include="VGMFile.h" />

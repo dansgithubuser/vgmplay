@@ -53,6 +53,7 @@
 #include "chips/mamedef.h"
 //#include "chips/multipcm.h"
 
+#include "controls.h"
 #include "utils.h"
 #include "Stream.h"
 #include "VGMPlay.h"
@@ -2159,6 +2160,11 @@ static void PlayVGM_UI(void)
 							Last95Freq / 1000.0);
 			}
 			//printf("  %u / %u", multipcm_get_channels(0, NULL), 28);
+			printf("  controls:");
+			for(unsigned i=0; i<20; ++i){
+				if(i%10==0) printf(" ");
+				printf("%d", controls[i]);
+			}
 			printf("\r");
 #ifndef WIN32
 			fflush(stdout);
@@ -2360,36 +2366,30 @@ static void PlayVGM_UI(void)
 #ifdef WIN32
 			case 0x1B:	// ESC
 #endif
-			case 'Q':
+			case ' ':
 				QuitPlay = true;
 				NextPLCmd = 0xFF;
 				break;
-			case ' ':
-				PauseVGM(! PausePlay);
-				PosPrint = true;
-				break;
-			case 'F':	// Fading
-				FadeTime = FadeTimeN;
-				FadePlay = true;
-				break;
-			case 'R':	// Restart
-				RestartVGM();
-				PosPrint = true;
-				break;
-			case 'B':	// Previous file (Back)
-				if (PLFileCount && /*! NextPLCmd &&*/ CurPLFile)
-				{
-					NextPLCmd = 0x01;
-					QuitPlay = true;
-				}
-				break;
-			case 'N':	// Next file
-				if (PLFileCount && /*! NextPLCmd &&*/ CurPLFile < PLFileCount - 0x01)
-				{
-					NextPLCmd = 0x00;
-					QuitPlay = true;
-				}
-				break;
+			case '1': controls[0]^=1; break;
+			case '2': controls[1]^=1; break;
+			case '3': controls[2]^=1; break;
+			case '4': controls[3]^=1; break;
+			case '5': controls[4]^=1; break;
+			case '6': controls[5]^=1; break;
+			case '7': controls[6]^=1; break;
+			case '8': controls[7]^=1; break;
+			case '9': controls[8]^=1; break;
+			case '0': controls[9]^=1; break;
+			case 'Q': controls[10]^=1; break;
+			case 'W': controls[11]^=1; break;
+			case 'E': controls[12]^=1; break;
+			case 'R': controls[13]^=1; break;
+			case 'T': controls[14]^=1; break;
+			case 'Y': controls[15]^=1; break;
+			case 'U': controls[16]^=1; break;
+			case 'I': controls[17]^=1; break;
+			case 'O': controls[18]^=1; break;
+			case 'P': controls[19]^=1; break;
 			}
 		}
 		
