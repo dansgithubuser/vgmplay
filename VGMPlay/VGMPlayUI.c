@@ -78,6 +78,7 @@ UINT32 PauseTimeJ;	// Pause Time for Jingles
 UINT32 PauseTimeL;	// Pause Time for Looping Songs
 extern UINT32 PauseTime;
 static UINT8 Show95Cmds;
+static UINT8 ControlDecade=0;
 
 extern float VolumeLevel;
 extern bool SurroundSound;
@@ -2165,6 +2166,7 @@ static void PlayVGM_UI(void)
 				if(i%10==0) printf(" ");
 				printf("%d", controls[i]);
 			}
+			printf(" %d", ControlDecade);
 			printf("\r");
 #ifndef WIN32
 			fflush(stdout);
@@ -2366,30 +2368,48 @@ static void PlayVGM_UI(void)
 #ifdef WIN32
 			case 0x1B:	// ESC
 #endif
-			case ' ':
+			case 'Q':
 				QuitPlay = true;
 				NextPLCmd = 0xFF;
 				break;
-			case '1': controls[0]^=1; break;
-			case '2': controls[1]^=1; break;
-			case '3': controls[2]^=1; break;
-			case '4': controls[3]^=1; break;
-			case '5': controls[4]^=1; break;
-			case '6': controls[5]^=1; break;
-			case '7': controls[6]^=1; break;
-			case '8': controls[7]^=1; break;
-			case '9': controls[8]^=1; break;
-			case '0': controls[9]^=1; break;
-			case 'Q': controls[10]^=1; break;
-			case 'W': controls[11]^=1; break;
-			case 'E': controls[12]^=1; break;
-			case 'R': controls[13]^=1; break;
-			case 'T': controls[14]^=1; break;
-			case 'Y': controls[15]^=1; break;
-			case 'U': controls[16]^=1; break;
-			case 'I': controls[17]^=1; break;
-			case 'O': controls[18]^=1; break;
-			case 'P': controls[19]^=1; break;
+			case ' ':
+				PauseVGM(! PausePlay);
+				PosPrint = true;
+				break;
+			case 'F':	// Fading
+				FadeTime = FadeTimeN;
+				FadePlay = true;
+				break;
+			case 'R':	// Restart
+				RestartVGM();
+				PosPrint = true;
+				break;
+			case 'B':	// Previous file (Back)
+				if (PLFileCount && /*! NextPLCmd &&*/ CurPLFile)
+				{
+					NextPLCmd = 0x01;
+					QuitPlay = true;
+				}
+				break;
+			case 'N':	// Next file
+				if (PLFileCount && /*! NextPLCmd &&*/ CurPLFile < PLFileCount - 0x01)
+				{
+					NextPLCmd = 0x00;
+					QuitPlay = true;
+				}
+				break;
+			case 'A': ++ControlDecade; break;
+			case 'Z': --ControlDecade; break;
+			case '1': controls[10*ControlDecade+0]^=1; break;
+			case '2': controls[10*ControlDecade+1]^=1; break;
+			case '3': controls[10*ControlDecade+2]^=1; break;
+			case '4': controls[10*ControlDecade+3]^=1; break;
+			case '5': controls[10*ControlDecade+4]^=1; break;
+			case '6': controls[10*ControlDecade+5]^=1; break;
+			case '7': controls[10*ControlDecade+6]^=1; break;
+			case '8': controls[10*ControlDecade+7]^=1; break;
+			case '9': controls[10*ControlDecade+8]^=1; break;
+			case '0': controls[10*ControlDecade+9]^=1; break;
 			}
 		}
 		
