@@ -5527,3 +5527,7 @@ void* PlayingThread(void* Arg)
 	return NULL;
 }
 #endif
+
+void ym2612_write_straight(UINT8 port, UINT8 reg, UINT8 data){
+	chip_reg_write(0x02, 0, port & 0x01, reg, data);
+}

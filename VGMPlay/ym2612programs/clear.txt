@@ -1,0 +1,9 @@
+100 clear_a.txt
+100 clear_algo.txt
+100 clear_d.txt
+100 clear_d2.txt
+100 clear_keys.txt
+100 clear_level.txt
+100 clear_lfo.txt
+100 clear_r.txt
+100 clear_tune.txt

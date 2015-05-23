@@ -1,0 +1,3 @@
+101 ym2612programs/
+100 clear.txt
+100 note.txt

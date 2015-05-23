@@ -126,3 +126,5 @@ unsigned char OpenPortTalk(void);
 void ClosePortTalk(void);
 
 typedef void (*strm_func)(UINT8 ChipID, stream_sample_t **outputs, int samples);
+
+void ym2612_write_straight(UINT8 port, UINT8 reg, UINT8 data);

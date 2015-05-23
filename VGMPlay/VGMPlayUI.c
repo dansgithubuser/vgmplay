@@ -1964,6 +1964,40 @@ static void ShowVGMTag(void)
 	return;
 }
 
+static void ym2612_program(const char* file_name)
+{
+	FILE* file;
+	unsigned command, reg, data;
+	static char prefix[256]={'\0'};
+	file=fopen(file_name, "r");
+	if(!file) return;
+	while(fscanf(file, "%x", &command)==1)
+	{
+		if(command<0x100&&fscanf(file, "%x %x", &reg, &data)==2)
+			ym2612_write_straight(command, reg, data);
+		else switch(command)
+		{
+		case 0x100:
+			{
+				char file_name[256];
+				unsigned i;
+				file_name[255]='\0';
+				i=sprintf(file_name, "%s", prefix);
+				if(!fscanf(file, "%s", file_name+i)) break;
+				if(file_name[255]) exit(-1);
+				ym2612_program(file_name);
+			}
+			break;
+		case 0x101:
+			prefix[255]='\0';
+			fscanf(file, "%s", prefix);
+			if(prefix[255]) exit(-1);
+			break;
+		}
+	}
+	fclose(file);
+}
+
 static void PlayVGM_UI(void)
 {
 	INT32 VGMPbSmplCount;
@@ -2398,8 +2432,9 @@ static void PlayVGM_UI(void)
 					QuitPlay = true;
 				}
 				break;
-			case 'A': ++ControlDecade; break;
-			case 'Z': --ControlDecade; break;
+			case 'X': ym2612_program("in.txt"); break;
+			case 'A': ++ControlDecade; ControlDecade%=2; break;
+			case 'Z': --ControlDecade; ControlDecade%=2; break;
 			case '1': controls[10*ControlDecade+0]^=1; break;
 			case '2': controls[10*ControlDecade+1]^=1; break;
 			case '3': controls[10*ControlDecade+2]^=1; break;
