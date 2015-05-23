@@ -56,6 +56,7 @@
 #include "ChipMapper.h"
 #include "VGMPlay.h"
 #include "VGMPlay_Intf.h"
+#include "controls.h"
 #ifdef CONSOLE_MODE
 #include "Stream.h"
 #endif
@@ -4196,7 +4197,8 @@ static void InterpretVGM(UINT32 SampleCount)
 			case 0x53:	// YM2612 write port 1
 				if (CHIP_CHECK(YM2612))
 				{
-					chip_reg_write(0x02, CurChip, Command & 0x01, VGMPnt[0x01], VGMPnt[0x02]);
+					if(!controls[CONTROL_DISABLE_VGM_YM2612])
+						chip_reg_write(0x02, CurChip, Command & 0x01, VGMPnt[0x01], VGMPnt[0x02]);
 				}
 				VGMPos += 0x03;
 				break;
