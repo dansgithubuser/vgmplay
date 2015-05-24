@@ -57,6 +57,7 @@
 #include "VGMPlay.h"
 #include "VGMPlay_Intf.h"
 #include "controls.h"
+#include "logger.h"
 #ifdef CONSOLE_MODE
 #include "Stream.h"
 #endif
@@ -5355,6 +5356,10 @@ UINT32 FillBuffer(WAVE_16BS* Buffer, UINT32 BufferSize)
 			TempBuf.Right *= -1;
 		Buffer[CurSmpl].Left = Limit2Short(TempBuf.Left);
 		Buffer[CurSmpl].Right = Limit2Short(TempBuf.Right);
+		if(controls[CONTROL_ENABLE_LOGGING]){
+			logPrint(0, "%d\n", Buffer[CurSmpl].Left);
+			logPrint(1, "%d\n", Buffer[CurSmpl].Right);
+		}
 		
 		if (FadePlay && ! FadeStart)
 		{

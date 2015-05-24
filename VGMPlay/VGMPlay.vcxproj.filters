@@ -260,6 +260,9 @@
     <ClCompile Include="controls.c">
       <Filter>Quellcodedateien</Filter>
     </ClCompile>
+    <ClCompile Include="logger.c">
+      <Filter>Quellcodedateien</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="PortTalk_IOCTL.h">
@@ -479,6 +482,9 @@
       <Filter>SoundCore</Filter>
     </ClInclude>
     <ClInclude Include="controls.h">
+      <Filter>Header-Dateien</Filter>
+    </ClInclude>
+    <ClInclude Include="logger.h">
       <Filter>Header-Dateien</Filter>
     </ClInclude>
   </ItemGroup>

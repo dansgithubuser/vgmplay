@@ -54,6 +54,7 @@
 //#include "chips/multipcm.h"
 
 #include "controls.h"
+#include "logger.h"
 #include "utils.h"
 #include "Stream.h"
 #include "VGMPlay.h"
@@ -192,6 +193,10 @@ int main(int argc, char* argv[])
 	UINT32 ChrPos;
 	INT32 OldCP;
 	
+	logInit();
+	logCreate(0, "out_l.log");
+	logCreate(1, "out_r.log");
+
 	// set locale to "current system locale"
 	// (makes Unicode characters (like umlauts) work under Linux and fixes some
 	//  Unicode -> ANSI conversions)
@@ -505,6 +510,8 @@ ExitProgram:
 	VGMPlay_Deinit();
 	free(AppName);
 	
+	logFinish();
+
 	return ErrRet;
 }
 
