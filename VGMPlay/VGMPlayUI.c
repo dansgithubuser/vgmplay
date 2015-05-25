@@ -196,6 +196,9 @@ int main(int argc, char* argv[])
 	logInit();
 	logCreate(0, "out_l.log");
 	logCreate(1, "out_r.log");
+	logCreate(2, "ym2612_out_l.log");
+	logCreate(3, "ym2612_ch1_op1_eg.log");
+	logCreate(4, "ym2612_ch1_op1_out.log");
 
 	// set locale to "current system locale"
 	// (makes Unicode characters (like umlauts) work under Linux and fixes some

@@ -1634,6 +1634,7 @@ INLINE void chan_calc(YM2612 *F2612, FM_OPN *OPN, FM_CH *CH)
   *CH->mem_connect = CH->mem_value;  /* restore delayed sample (MEM) value to m2 or c2 */
 
   eg_out = volume_calc(&CH->SLOT[SLOT1]);
+  if(controls[CONTROL_ENABLE_LOGGING]) logPrint(3, "%d\n", eg_out);
   {
     INT32 out = CH->op1_out[0] + CH->op1_out[1];
     CH->op1_out[0] = CH->op1_out[1];
@@ -1657,6 +1658,7 @@ INLINE void chan_calc(YM2612 *F2612, FM_OPN *OPN, FM_CH *CH)
         out=0;
 
       CH->op1_out[1] = op_calc1(CH->SLOT[SLOT1].phase, eg_out, (out<<CH->FB) );
+      if(controls[CONTROL_ENABLE_LOGGING]) logPrint(4, "%d\n", CH->op1_out[1]);
     }
   }
 
@@ -2399,6 +2401,7 @@ void ym2612_update_one(void *chip, FMSAMPLE **buffer, int length)
 			F2612->WaveR = rt;
 		if (F2612->WaveOutMode ^ 0x03)
 			F2612->WaveOutMode ^= 0x03;
+		if(controls[CONTROL_ENABLE_LOGGING]) logPrint(2, "%d\n", F2612->WaveL);
 		bufL[i] = F2612->WaveL;
 		bufR[i] = F2612->WaveR;
 

@@ -16,6 +16,7 @@ void logCreate(unsigned logId, const char* fileName){
 }
 
 void logPrint(unsigned logId, const char* format, ...){
+	if(!fLogs[logId]) return;
 	va_list args;
 	va_start(args, format);
 	vfprintf(fLogs[logId], format, args);
