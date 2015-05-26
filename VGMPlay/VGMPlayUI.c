@@ -2205,12 +2205,14 @@ static void PlayVGM_UI(void)
 							Last95Freq / 1000.0);
 			}
 			//printf("  %u / %u", multipcm_get_channels(0, NULL), 28);
-			printf("  controls:");
-			for(unsigned i=0; i<20; ++i){
-				if(i%10==0) printf(" ");
-				printf("%d", controls[i]);
+			for(unsigned i=0; i<4; ++i){
+				printf(ControlDecade==i?">":" ");
+				printf("%x%x%x",
+					controls[i*10+9]<<3|controls[i*10+8]<<2|controls[i*10+7]<<1|controls[i*10+6],
+					controls[i*10+5]<<3|controls[i*10+4]<<2|controls[i*10+3]<<1|controls[i*10+2],
+					                                        controls[i*10+1]<<1|controls[i*10+0]
+				);
 			}
-			printf(" %d", ControlDecade);
 			printf("\r");
 #ifndef WIN32
 			fflush(stdout);
@@ -2443,8 +2445,8 @@ static void PlayVGM_UI(void)
 				}
 				break;
 			case 'X': ym2612_program("in.txt"); break;
-			case 'A': ++ControlDecade; ControlDecade%=2; break;
-			case 'Z': --ControlDecade; ControlDecade%=2; break;
+			case 'A': ++ControlDecade; ControlDecade%=4; break;
+			case 'Z': --ControlDecade; ControlDecade%=4; break;
 			case '1': controls[10*ControlDecade+0]^=1; break;
 			case '2': controls[10*ControlDecade+1]^=1; break;
 			case '3': controls[10*ControlDecade+2]^=1; break;
@@ -2455,6 +2457,11 @@ static void PlayVGM_UI(void)
 			case '8': controls[10*ControlDecade+7]^=1; break;
 			case '9': controls[10*ControlDecade+8]^=1; break;
 			case '0': controls[10*ControlDecade+9]^=1; break;
+			}
+			if(ControlDecade==3){
+				UINT32 mask=0;
+				for(unsigned i=0; i<6; ++i) mask|=controls[30+i]<<i;
+				ym2612_set_mute_mask(0, mask);
 			}
 		}
 		

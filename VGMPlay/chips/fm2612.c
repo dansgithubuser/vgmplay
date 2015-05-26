@@ -134,6 +134,7 @@
 #include <math.h>
 #include "mamedef.h"
 #include "../controls.h"
+#include "../logger.h"
 #include "fm.h"
 
 #define NULL	((void *)0)
@@ -602,6 +603,8 @@ typedef struct
 	UINT8	kcode;      /* key code:                        */
 	UINT32	block_fnum; /* current blk/fnum value for this slot (can be different betweeen slots of one channel in 3slot mode) */
 	UINT8	Muted;
+
+	UINT8	number;     /* channel number, for logging, not part of ym2612 functionality */
 } FM_CH;
 
 
@@ -1634,7 +1637,7 @@ INLINE void chan_calc(YM2612 *F2612, FM_OPN *OPN, FM_CH *CH)
   *CH->mem_connect = CH->mem_value;  /* restore delayed sample (MEM) value to m2 or c2 */
 
   eg_out = volume_calc(&CH->SLOT[SLOT1]);
-  if(controls[CONTROL_ENABLE_LOGGING]) logPrint(3, "%d\n", eg_out);
+  if(controls[CONTROL_ENABLE_LOGGING]&&CH->number==0) logPrint(3, "%d\n", eg_out);
   {
     INT32 out = CH->op1_out[0] + CH->op1_out[1];
     CH->op1_out[0] = CH->op1_out[1];
@@ -1658,7 +1661,7 @@ INLINE void chan_calc(YM2612 *F2612, FM_OPN *OPN, FM_CH *CH)
         out=0;
 
       CH->op1_out[1] = op_calc1(CH->SLOT[SLOT1].phase, eg_out, (out<<CH->FB) );
-      if(controls[CONTROL_ENABLE_LOGGING]) logPrint(4, "%d\n", CH->op1_out[1]);
+      if(controls[CONTROL_ENABLE_LOGGING]&&CH->number==0) logPrint(4, "%d\n", CH->op1_out[1]);
     }
   }
 
@@ -2117,6 +2120,7 @@ static void reset_channels( FM_ST *ST , FM_CH *CH , int num )
 			CH[c].SLOT[s].volume = MAX_ATT_INDEX;
 			CH[c].SLOT[s].vol_out= MAX_ATT_INDEX;
 		}
+		CH[c].number = c;
 	}
 }
 
